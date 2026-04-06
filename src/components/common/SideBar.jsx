@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaChartBar, FaDesktop, FaUserLock } from "react-icons/fa";
 import { BsMortarboardFill } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
@@ -7,6 +7,11 @@ import { AuthContext } from "../auth/AuthContext";
 
 const SideBar = () => {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   return (
     <div className="sidebar-custom">
       <ul className="sidebar-list">
@@ -68,7 +73,10 @@ const SideBar = () => {
         )}
 
         <li>
-          <button onClick={logout} className="sidebar-link logout btn-reset">
+          <button
+            onClick={handleLogout}
+            className="sidebar-link logout btn-reset"
+          >
             <MdLogout className="sidebar-icon" />
             Logout
           </button>
