@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(userInfo ? JSON.parse(userInfo) : null);
 
   const login = (user) => {
-    localStorage.setItem("userInfoEdurootx", JSON.stringify(userInfo));
+    localStorage.setItem("ZorvynFinanceUserInfo", JSON.stringify(user));
     setUser(user);
   };
 

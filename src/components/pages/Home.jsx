@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../common/Layout";
+import { AuthContext } from "../auth/AuthContext";
 
 const Home = () => {
+  const { user } = useContext(AuthContext);
+  const isAuthenticated = Boolean(user);
+
   return (
     <Layout>
       <div className="d-flex align-items-center justify-content-center">
@@ -19,12 +23,32 @@ const Home = () => {
             </Link>
           </div>
           <br />
+
           <hr />
-          <div className="text-light fw-100">
-            Kindly <span className="highlight">Login</span> OR{" "}
-            <span className="highlight">Register</span> to access the dashboard
-            page!!
-          </div>
+
+          {!isAuthenticated ? (
+            <div className="text-light fw-100">
+              Kindly{" "}
+              <Link to="/login" className="highlight">
+                Login
+              </Link>{" "}
+              OR{" "}
+              <Link to="/register" className="highlight">
+                Register
+              </Link>{" "}
+              to access the dashboard page!
+            </div>
+          ) : (
+            <div className="text-light fw-100">
+              Welcome back,{" "}
+              <span className="highlight">{user.name || "User"}</span>!
+              <div className="mt-3">
+                <Link to="/dashboard" className="btn btn-primary">
+                  Go to Dashboard
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Layout>

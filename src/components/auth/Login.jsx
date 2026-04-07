@@ -9,6 +9,7 @@ import { AuthContext } from "./AuthContext";
 const Login = () => {
   const { login } = useContext(AuthContext);
   const [showPwd, setShowPwd] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -18,35 +19,39 @@ const Login = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    // console.log(data);
-    await fetch(`${apiUrl}/login`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.status == 200) {
-          const userInfo = {
-            id: result.id,
-            name: result.name,
-            role: result.role,
-            token: result.token,
-          };
+    setIsLoading(true);
 
-          localStorage.setItem(
-            "ZorvynFinanceUserInfo",
-            JSON.stringify(userInfo),
-          );
-          login(userInfo);
-          navigate("/dashboard");
-        } else {
-          toast.error(result.message);
-        }
+    try {
+      const response = await fetch(`${apiUrl}/login`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
       });
+
+      const result = await response.json();
+
+      if (result.status == 200) {
+        const userInfo = {
+          id: result.id,
+          name: result.name,
+          role: result.role,
+          token: result.token,
+        };
+
+        localStorage.setItem("ZorvynFinanceUserInfo", JSON.stringify(userInfo));
+        login(userInfo);
+        navigate("/dashboard");
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -108,8 +113,25 @@ const Login = () => {
             </div>
 
             {/* Submit */}
-            <button type="submit" className="btn-submit-custom">
-              Login <i className="bi bi-arrow-right"></i>
+            <button
+              type="submit"
+              className="btn-submit-custom"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Logging in...
+                </>
+              ) : (
+                <>
+                  Login <i className="bi bi-arrow-right"></i>
+                </>
+              )}
             </button>
           </form>
         </div>
